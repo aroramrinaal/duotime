@@ -7,6 +7,7 @@
 
 import SwiftUI
 
+// MARK: - Simple ContentView (currently not used in the app)
 struct ContentView: View {
     var body: some View {
         VStack {
