@@ -18,19 +18,6 @@ struct duotimeApp: App {
     }
     
     var body: some Scene {
-        WindowGroup {
-            VStack {
-                Text("duotime is running in the menu bar")
-                    .padding()
-                Text("You can close this window")
-                    .font(.caption)
-                    .foregroundColor(.secondary)
-            }
-            .frame(width: 300, height: 100)
-        }
-        .windowStyle(.hiddenTitleBar)
-        .windowResizability(.contentSize)
-        
         MenuBarExtra("duotime", systemImage: "clock") {
             VStack {
                 Text("duotime")
