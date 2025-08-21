@@ -18,23 +18,26 @@ struct duotimeApp: App {
     }
     
     var body: some Scene {
-        MenuBarExtra("duotime", systemImage: "clock") {
+        MenuBarExtra {
             VStack {
                 Text("duotime")
                     .font(.headline)
-                
+
                 TimelineView(.periodic(from: .now, by: 60)) { context in
                     Text(formattedNYCTime(context.date))
                         .font(.monospaced(.body)())
                 }
-                
+
                 Divider()
-                
+
                 Button("Quit duotime") {
                     NSApplication.shared.terminate(nil)
                 }
             }
             .padding()
+        } label: {
+            Text(formattedNYCTime())
+                .font(.system(.body, design: .monospaced))
         }
     }
 }
