@@ -135,13 +135,13 @@ struct SettingsView: View {
                         Text("Prefix text")
                         Spacer()
                         VStack(alignment: .trailing, spacing: 4) {
-                            NoFocusRingTextField(placeholder: "Optional (e.g. 🇺🇸)", text: $prefixText)
+                            NoFocusRingTextField(placeholder: "Max 5 chars (e.g. 🇺🇸)", text: $prefixText, maxCharacters: 5)
                                 .frame(width: 200)
                                 .onChange(of: prefixText) { _, newValue in
                                     timeViewModel.prefixText = newValue
                                 }
 
-                            Text("Tip: Use a flag emoji")
+                            Text("Tip: Use a flag emoji (max 5 characters)")
                                 .font(.footnote)
                                 .foregroundColor(.secondary)
                         }

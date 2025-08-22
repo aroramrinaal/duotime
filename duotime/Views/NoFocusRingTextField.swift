@@ -16,12 +16,20 @@ struct NoFocusRingTextField: NSViewRepresentable {
 
         func controlTextDidChange(_ obj: Notification) {
             guard let tf = obj.object as? NSTextField else { return }
+
+            // Limit to maxCharacters to prevent menu bar issues
+            let inputText = tf.stringValue
+            if inputText.count > parent.maxCharacters {
+                tf.stringValue = String(inputText.prefix(parent.maxCharacters))
+            }
+
             parent.text = tf.stringValue
         }
     }
 
     var placeholder: String
     @Binding var text: String
+    var maxCharacters: Int = 5
 
     func makeCoordinator() -> Coordinator { Coordinator(self) }
 
