@@ -10,19 +10,22 @@ import Foundation
 
 struct SettingsView: View {
     @ObservedObject var timeViewModel: TimeViewModel
-    @State private var searchText: String = ""
+    @State private var launchAtLogin = false
+    @State private var use24HourTime = false
+    @State private var prefixText = ""
 
     init(timeViewModel: TimeViewModel) {
         self.timeViewModel = timeViewModel
     }
 
-    // Popular timezones similar to iOS World Clock
+    // Popular timezones for the dropdown
     private var popularTimezones: [TimezoneInfo] = [
         // Americas
         TimezoneInfo(identifier: "America/New_York", cityName: "New York", countryRegion: "United States"),
         TimezoneInfo(identifier: "America/Los_Angeles", cityName: "Los Angeles", countryRegion: "United States"),
         TimezoneInfo(identifier: "America/Chicago", cityName: "Chicago", countryRegion: "United States"),
         TimezoneInfo(identifier: "America/Denver", cityName: "Denver", countryRegion: "United States"),
+        TimezoneInfo(identifier: "America/Phoenix", cityName: "Phoenix", countryRegion: "United States"),
         TimezoneInfo(identifier: "America/Toronto", cityName: "Toronto", countryRegion: "Canada"),
         TimezoneInfo(identifier: "America/Vancouver", cityName: "Vancouver", countryRegion: "Canada"),
         TimezoneInfo(identifier: "America/Mexico_City", cityName: "Mexico City", countryRegion: "Mexico"),
@@ -47,7 +50,6 @@ struct SettingsView: View {
         TimezoneInfo(identifier: "Asia/Singapore", cityName: "Singapore", countryRegion: "Singapore"),
         TimezoneInfo(identifier: "Asia/Seoul", cityName: "Seoul", countryRegion: "South Korea"),
         TimezoneInfo(identifier: "Asia/Kolkata", cityName: "Mumbai", countryRegion: "India"),
-        TimezoneInfo(identifier: "Asia/Kolkata", cityName: "Delhi", countryRegion: "India"),
         TimezoneInfo(identifier: "Asia/Dubai", cityName: "Dubai", countryRegion: "UAE"),
         TimezoneInfo(identifier: "Asia/Bangkok", cityName: "Bangkok", countryRegion: "Thailand"),
         TimezoneInfo(identifier: "Asia/Manila", cityName: "Manila", countryRegion: "Philippines"),
@@ -65,142 +67,130 @@ struct SettingsView: View {
         TimezoneInfo(identifier: "Asia/Tehran", cityName: "Tehran", countryRegion: "Iran")
     ]
 
-    private var allTimezones: [TimezoneInfo] {
-        let allIds = TimeZone.knownTimeZoneIdentifiers.sorted()
-        let popularIds = Set(popularTimezones.map { $0.identifier })
-
-        let additionalTimezones = allIds.compactMap { identifier -> TimezoneInfo? in
-            guard !popularIds.contains(identifier) else { return nil }
-
-            let components = identifier.split(separator: "/")
-            guard components.count >= 2 else { return nil }
-
-            let region = String(components[0])
-            let cityName = String(components.last ?? "").replacingOccurrences(of: "_", with: " ")
-
-            return TimezoneInfo(identifier: identifier, cityName: cityName, countryRegion: region)
+    private var selectedTimezoneDisplay: String {
+        if let timezone = popularTimezones.first(where: { $0.identifier == timeViewModel.currentTimezone }) {
+            let timeZone = TimeZone(identifier: timezone.identifier)!
+            let offset = timeZone.secondsFromGMT() / 3600
+            let offsetString = offset >= 0 ? "+\(offset)" : "\(offset)"
+            return "\(timezone.cityName) (UTC\(offsetString))"
         }
-
-        return popularTimezones + additionalTimezones
-    }
-
-    private var filteredTimezones: [TimezoneInfo] {
-        let timezones = searchText.isEmpty ? popularTimezones : allTimezones
-
-        if searchText.isEmpty {
-            return timezones
-        } else {
-            return timezones.filter { timezone in
-                timezone.cityName.localizedCaseInsensitiveContains(searchText) ||
-                timezone.countryRegion.localizedCaseInsensitiveContains(searchText) ||
-                timezone.identifier.localizedCaseInsensitiveContains(searchText)
-            }
-        }
-    }
-
-    private func currentTime(for identifier: String) -> String {
-        let tz = TimeZone(identifier: identifier)
-        let formatter = DateFormatter()
-        formatter.timeZone = tz
-        formatter.dateFormat = "h:mm a"
-        return formatter.string(from: Date())
+        // Fallback for timezones not in our popular list
+        let timeZone = TimeZone(identifier: timeViewModel.currentTimezone)!
+        let offset = timeZone.secondsFromGMT() / 3600
+        let offsetString = offset >= 0 ? "+\(offset)" : "\(offset)"
+        let cityName = timeViewModel.currentTimezone.split(separator: "/").last?.replacingOccurrences(of: "_", with: " ") ?? timeViewModel.currentTimezone
+        return "\(cityName) (UTC\(offsetString))"
     }
 
     var body: some View {
-        VStack(alignment: .leading, spacing: 16) {
-            Text("duotime Settings")
-                .font(.headline)
-                .padding(.bottom, 8)
-
-            Text("Choose your favorite timezone:")
-                .foregroundStyle(.secondary)
-
-            ZStack(alignment: .trailing) {
-                TextField("Search timezones...", text: $searchText)
-                    .textFieldStyle(.roundedBorder)
-
-                if !searchText.isEmpty {
-                    Button(action: {
-                        searchText = ""
-                    }) {
-                        Image(systemName: "xmark.circle.fill")
-                            .foregroundColor(.gray)
-                            .padding(.trailing, 8)
-                    }
-                    .buttonStyle(.plain)
-                }
-            }
-
-            if searchText.isEmpty {
-                Text("Popular Cities:")
-                    .font(.subheadline)
-                    .fontWeight(.medium)
-                    .foregroundStyle(.secondary)
-            } else {
-                Text("Search Results:")
-                    .font(.subheadline)
-                    .fontWeight(.medium)
-                    .foregroundStyle(.secondary)
-            }
-
-            ScrollView {
-                LazyVStack(alignment: .leading, spacing: 4) {
-                    ForEach(filteredTimezones, id: \.identifier) { timezone in
-                        Button(action: {
-                            timeViewModel.updateTimezone(timezone.identifier)
-                        }) {
-                            HStack {
-                                VStack(alignment: .leading, spacing: 2) {
-                                    Text(timezone.cityName)
-                                        .foregroundColor(.primary)
-                                        .fontWeight(.medium)
-                                    Text(timezone.countryRegion)
-                                        .font(.caption)
-                                        .foregroundColor(.secondary)
-                                }
-                                Spacer()
-                                VStack(alignment: .trailing, spacing: 2) {
-                                    if timezone.identifier == timeViewModel.currentTimezone {
-                                        Image(systemName: "checkmark")
-                                            .foregroundColor(.blue)
-                                            .fontWeight(.semibold)
-                                    }
-                                    Text(currentTime(for: timezone.identifier))
-                                        .font(.caption)
-                                        .foregroundColor(.secondary)
-                                }
-                            }
-                            .padding(.vertical, 8)
-                            .padding(.horizontal, 12)
-                            .background(
-                                timezone.identifier == timeViewModel.currentTimezone ?
-                                Color.blue.opacity(0.1) : Color.clear
-                            )
-                            .cornerRadius(8)
-                        }
-                        .buttonStyle(.plain)
-                    }
-                }
-            }
-            .frame(height: 320)
-
+        VStack(spacing: 0) {
+            // Header with branding
             HStack {
-                Text("Selected:")
-                    .font(.caption)
-                    .foregroundStyle(.secondary)
+                VStack(alignment: .leading, spacing: 4) {
+                    Text("duotime")
+                        .font(.title)
+                        .fontWeight(.semibold)
+                        .foregroundColor(.primary)
+                    Text("Second Clock Settings")
+                        .font(.subheadline)
+                        .foregroundColor(.secondary)
+                }
                 Spacer()
-                if let selectedTimezoneInfo = popularTimezones.first(where: { $0.identifier == timeViewModel.currentTimezone }) {
-                    Text("\(selectedTimezoneInfo.displayName)")
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
-                } else {
-                    Text(timeViewModel.currentTimezone.replacingOccurrences(of: "_", with: " "))
-                        .font(.caption)
-                        .foregroundStyle(.secondary)
+            }
+            .padding(.horizontal, 24)
+            .padding(.top, 24)
+            .padding(.bottom, 32)
+
+            VStack(spacing: 24) {
+                // Launch at login
+                HStack {
+                    Text("Launch at login")
+                        .font(.system(size: 14))
+                    Spacer()
+                    Toggle("", isOn: $launchAtLogin)
+                        .toggleStyle(.switch)
+                }
+                .padding(.horizontal, 24)
+
+                Divider()
+                    .padding(.horizontal, 24)
+
+                // 24-hour time
+                HStack {
+                    Text("24-hour time")
+                        .font(.system(size: 14))
+                    Spacer()
+                    Toggle("", isOn: $use24HourTime)
+                        .toggleStyle(.switch)
+                }
+                .padding(.horizontal, 24)
+
+                Divider()
+                    .padding(.horizontal, 24)
+
+                // Time zone selection
+                HStack {
+                    Text("Time zone")
+                        .font(.system(size: 14))
+                    Spacer()
+                    Menu {
+                        ForEach(popularTimezones, id: \.identifier) { timezone in
+                            Button {
+                                timeViewModel.updateTimezone(timezone.identifier)
+                            } label: {
+                                let timeZone = TimeZone(identifier: timezone.identifier)!
+                                let offset = timeZone.secondsFromGMT() / 3600
+                                let offsetString = offset >= 0 ? "+\(offset)" : "\(offset)"
+                                Text("\(timezone.cityName) (UTC\(offsetString))")
+                            }
+                        }
+                    } label: {
+                        HStack {
+                            Text(selectedTimezoneDisplay)
+                                .font(.system(size: 14))
+                                .foregroundColor(.primary)
+                            Image(systemName: "chevron.up.chevron.down")
+                                .font(.system(size: 10))
+                                .foregroundColor(.secondary)
+                        }
+                        .padding(.horizontal, 10)
+                        .padding(.vertical, 6)
+                        .background(Color(NSColor.controlBackgroundColor))
+                        .cornerRadius(6)
+                    }
+                    .menuStyle(.borderlessButton)
+                }
+                .padding(.horizontal, 24)
+
+                Divider()
+                    .padding(.horizontal, 24)
+
+                // Prefix text
+                VStack(alignment: .leading, spacing: 12) {
+                    HStack {
+                        Text("Prefix text")
+                            .font(.system(size: 14))
+                        Spacer()
+                    }
+                    .padding(.horizontal, 24)
+                    
+                    VStack(alignment: .leading, spacing: 6) {
+                        TextField("", text: $prefixText)
+                            .textFieldStyle(.roundedBorder)
+                            .font(.system(size: 14))
+                            .padding(.horizontal, 24)
+                        
+                        Text("Tip: You could use a flag emoji")
+                            .font(.system(size: 12))
+                            .foregroundColor(.secondary)
+                            .padding(.horizontal, 24)
+                    }
                 }
             }
+
+            Spacer()
         }
-        .padding()
-        .frame(width: 400, height: 450)
+        .frame(width: 480, height: 380)
+        .background(Color(NSColor.windowBackgroundColor))
     }
 }
