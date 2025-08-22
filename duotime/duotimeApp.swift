@@ -16,7 +16,7 @@ struct duotimeApp: App {
         MenuBarExtra {
             VStack(spacing: 12) {
                 SettingsLink {
-                    Text("Settings")
+                    Text("Change Timezone")
                 }
                 .buttonStyle(.plain)
                 .foregroundColor(.blue)
