@@ -13,28 +13,20 @@ struct duotimeApp: App {
     @StateObject private var timeViewModel = TimeViewModel()
     
     var body: some Scene {
-        MenuBarExtra {
-            VStack(spacing: 12) {
-                SettingsLink {
-                    Text("Change Timezone")
-                }
-                .buttonStyle(.plain)
-                .foregroundColor(.blue)
-                
-                Divider()
-                
-                Button("Quit duotime") {
-                    NSApplication.shared.terminate(nil)
-                }
-                .buttonStyle(.plain)
+                        MenuBarExtra {
+            SettingsLink {
+                Text("Change Timezone")
             }
-            .padding()
-            .frame(width: 150)
+
+            Divider()
+
+            Button("Quit duotime") {
+                NSApplication.shared.terminate(nil)
+            }
         } label: {
             Text(timeViewModel.currentTime)
                 .font(.system(.body, design: .monospaced))
         }
-        .menuBarExtraStyle(.window)
         
         Settings {
             SettingsView(timeViewModel: timeViewModel)
