@@ -13,7 +13,7 @@ struct SettingsView: View {
     @ObservedObject var timeViewModel: TimeViewModel
     @AppStorage("launchAtLogin") private var launchAtLogin = false
     @AppStorage("use24HourTime") private var use24HourTime = false
-    @AppStorage("useDefaultTitlebar") private var useDefaultTitlebar = false
+
     @AppStorage("prefixText") private var prefixText = ""
 
     init(timeViewModel: TimeViewModel) {
@@ -133,16 +133,6 @@ struct SettingsView: View {
             .padding(.vertical, 4)
 
             Divider()
-            
-            // Default titlebar
-            HStack {
-                Text("Use default titlebar")
-                Spacer()
-                Toggle("", isOn: $useDefaultTitlebar)
-            }
-            .padding(.vertical, 4)
-
-            Divider()
 
             // Time zone selection
             HStack {
@@ -188,7 +178,7 @@ struct SettingsView: View {
             .padding(.vertical, 4)
         }
         .padding()
-        .frame(width: 400, height: 340)
+        .frame(width: 400, height: 300)
         .onAppear {
             // Initialize settings from TimeViewModel
             use24HourTime = timeViewModel.use24HourTime
