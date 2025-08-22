@@ -8,7 +8,7 @@
 import SwiftUI
 import Foundation
 import ServiceManagement
-import AppKit   // needed for NSViewRepresentable text field without focus ring
+import AppKit   // for Color(nsColor:) and NSViewRepresentable
 
 struct SettingsView: View {
     @ObservedObject var timeViewModel: TimeViewModel
@@ -20,8 +20,6 @@ struct SettingsView: View {
         self.timeViewModel = timeViewModel
     }
 
-
-
     private var selectedTimezoneDisplay: String {
         if let timezone = PopularTimezones.all.first(where: { $0.identifier == timeViewModel.currentTimezone }) {
             let timeZone = TimeZone(identifier: timezone.identifier)!
@@ -29,7 +27,6 @@ struct SettingsView: View {
             let offsetString = offset >= 0 ? "+\(offset)" : "\(offset)"
             return "\(timezone.cityName) (UTC\(offsetString))"
         }
-        // Fallback
         let timeZone = TimeZone(identifier: timeViewModel.currentTimezone)!
         let offset = timeZone.secondsFromGMT() / 3600
         let offsetString = offset >= 0 ? "+\(offset)" : "\(offset)"
@@ -80,6 +77,7 @@ struct SettingsView: View {
                     .padding(.horizontal, 16)
                     .padding(.vertical, 12)
                 }
+                .groupPanel() // rounded border
             }
 
             // Time Display + Timezone
@@ -151,17 +149,38 @@ struct SettingsView: View {
                     .padding(.horizontal, 16)
                     .padding(.vertical, 12)
                 }
+                .groupPanel() // rounded border
             }
         }
         .padding(20)
         .frame(width: 400, height: 320)
-        // make whole window use the same dark system group color
+        // keep the window on the darker system control background
         .background(Color(NSColor.controlBackgroundColor))
         .onAppear {
             use24HourTime = timeViewModel.use24HourTime
             prefixText = timeViewModel.prefixText
         }
     }
+}
+
+/// rounded panel helper with subtle separator stroke
+private struct GroupPanel: ViewModifier {
+    func body(content: Content) -> some View {
+        content
+            .background(
+                // keep same fill as window to honor your "no extra color" request
+                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                    .fill(Color(NSColor.controlBackgroundColor))
+            )
+            .overlay(
+                RoundedRectangle(cornerRadius: 10, style: .continuous)
+                    .stroke(Color(nsColor: .separatorColor), lineWidth: 1)
+            )
+    }
+}
+
+private extension View {
+    func groupPanel() -> some View { self.modifier(GroupPanel()) }
 }
 
 /// An AppKit-backed text field that looks native but hides the blue focus ring.
@@ -186,8 +205,8 @@ struct NoFocusRingTextField: NSViewRepresentable {
         tf.placeholderString = placeholder
         tf.isBezeled = true
         tf.bezelStyle = .roundedBezel
-        tf.focusRingType = .none          // key line: no blue focus ring
-        tf.drawsBackground = true         // keep default look
+        tf.focusRingType = .none
+        tf.drawsBackground = true
         tf.isEditable = true
         tf.isSelectable = true
         tf.delegate = context.coordinator
