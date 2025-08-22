@@ -7,12 +7,14 @@
 
 import SwiftUI
 import Foundation
+import ServiceManagement
 
 struct SettingsView: View {
     @ObservedObject var timeViewModel: TimeViewModel
-    @State private var launchAtLogin = false
-    @State private var use24HourTime = false
-    @State private var prefixText = ""
+    @AppStorage("launchAtLogin") private var launchAtLogin = false
+    @AppStorage("use24HourTime") private var use24HourTime = false
+    @AppStorage("useDefaultTitlebar") private var useDefaultTitlebar = false
+    @AppStorage("prefixText") private var prefixText = ""
 
     init(timeViewModel: TimeViewModel) {
         self.timeViewModel = timeViewModel
@@ -81,6 +83,28 @@ struct SettingsView: View {
         let cityName = timeViewModel.currentTimezone.split(separator: "/").last?.replacingOccurrences(of: "_", with: " ") ?? timeViewModel.currentTimezone
         return "\(cityName) (UTC\(offsetString))"
     }
+    
+    private func toggleLaunchAtLogin() {
+        if #available(macOS 13.0, *) {
+            do {
+                if launchAtLogin {
+                    try SMAppService.mainApp.register()
+                } else {
+                    try SMAppService.mainApp.unregister()
+                }
+            } catch {
+                print("Failed to \(launchAtLogin ? "enable" : "disable") launch at login: \(error)")
+            }
+        } else {
+            // Fallback for older macOS versions
+            let bundleIdentifier = Bundle.main.bundleIdentifier!
+            if launchAtLogin {
+                SMLoginItemSetEnabled(bundleIdentifier as CFString, true)
+            } else {
+                SMLoginItemSetEnabled(bundleIdentifier as CFString, false)
+            }
+        }
+    }
 
     var body: some View {
         VStack(spacing: 16) {
@@ -89,6 +113,9 @@ struct SettingsView: View {
                 Text("Launch at login")
                 Spacer()
                 Toggle("", isOn: $launchAtLogin)
+                    .onChange(of: launchAtLogin) { _, _ in
+                        toggleLaunchAtLogin()
+                    }
             }
             .padding(.vertical, 4)
 
@@ -99,6 +126,19 @@ struct SettingsView: View {
                 Text("24-hour time")
                 Spacer()
                 Toggle("", isOn: $use24HourTime)
+                    .onChange(of: use24HourTime) { _, newValue in
+                        timeViewModel.use24HourTime = newValue
+                    }
+            }
+            .padding(.vertical, 4)
+
+            Divider()
+            
+            // Default titlebar
+            HStack {
+                Text("Use default titlebar")
+                Spacer()
+                Toggle("", isOn: $useDefaultTitlebar)
             }
             .padding(.vertical, 4)
 
@@ -136,6 +176,9 @@ struct SettingsView: View {
                     TextField("Optional (e.g. 🇺🇸)", text: $prefixText)
                         .textFieldStyle(RoundedBorderTextFieldStyle())
                         .frame(width: 200)
+                        .onChange(of: prefixText) { _, newValue in
+                            timeViewModel.prefixText = newValue
+                        }
                     
                     Text("Tip: Use a flag emoji")
                         .font(.footnote)
@@ -145,6 +188,11 @@ struct SettingsView: View {
             .padding(.vertical, 4)
         }
         .padding()
-        .frame(width: 400, height: 300)
+        .frame(width: 400, height: 340)
+        .onAppear {
+            // Initialize settings from TimeViewModel
+            use24HourTime = timeViewModel.use24HourTime
+            prefixText = timeViewModel.prefixText
+        }
     }
 }
