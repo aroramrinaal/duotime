@@ -83,33 +83,30 @@ struct SettingsView: View {
     }
 
     var body: some View {
-        VStack(spacing: 20) {
+        VStack(spacing: 16) {
             // Launch at login
             HStack {
                 Text("Launch at login")
-                    .font(.system(size: 13))
                 Spacer()
                 Toggle("", isOn: $launchAtLogin)
-                    .toggleStyle(.switch)
             }
+            .padding(.vertical, 4)
 
             Divider()
 
             // 24-hour time
             HStack {
                 Text("24-hour time")
-                    .font(.system(size: 13))
                 Spacer()
                 Toggle("", isOn: $use24HourTime)
-                    .toggleStyle(.switch)
             }
+            .padding(.vertical, 4)
 
             Divider()
 
             // Time zone selection
             HStack {
                 Text("Time zone")
-                    .font(.system(size: 13))
                 Spacer()
                 Menu {
                     ForEach(popularTimezones, id: \.identifier) { timezone in
@@ -123,45 +120,31 @@ struct SettingsView: View {
                         }
                     }
                 } label: {
-                    HStack {
-                        Text(selectedTimezoneDisplay)
-                            .font(.system(size: 13))
-                            .foregroundColor(.primary)
-                        Image(systemName: "chevron.up.chevron.down")
-                            .font(.system(size: 10))
-                            .foregroundColor(.secondary)
-                    }
-                    .padding(.horizontal, 8)
-                    .padding(.vertical, 4)
-                    .background(Color(NSColor.controlBackgroundColor))
-                    .cornerRadius(4)
+                    Text(selectedTimezoneDisplay)
+                        .frame(maxWidth: 200)
                 }
-                .menuStyle(.borderlessButton)
             }
+            .padding(.vertical, 4)
 
             Divider()
 
             // Prefix text
-            VStack(alignment: .leading, spacing: 8) {
-                HStack {
-                    Text("Prefix text")
-                        .font(.system(size: 13))
-                    Spacer()
-                }
-                
-                VStack(alignment: .leading, spacing: 4) {
-                    TextField("", text: $prefixText)
-                        .textFieldStyle(.roundedBorder)
-                        .font(.system(size: 13))
+            HStack(alignment: .top) {
+                Text("Prefix text")
+                Spacer()
+                VStack(alignment: .trailing, spacing: 4) {
+                    TextField("Optional (e.g. 🇺🇸)", text: $prefixText)
+                        .textFieldStyle(RoundedBorderTextFieldStyle())
+                        .frame(width: 200)
                     
-                    Text("Tip: You could use a flag emoji")
-                        .font(.system(size: 11))
+                    Text("Tip: Use a flag emoji")
+                        .font(.footnote)
                         .foregroundColor(.secondary)
                 }
             }
+            .padding(.vertical, 4)
         }
-        .padding(20)
-        .frame(width: 400, height: 280)
-        .background(Color(NSColor.windowBackgroundColor))
+        .padding()
+        .frame(width: 400, height: 300)
     }
 }
