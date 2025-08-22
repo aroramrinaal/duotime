@@ -107,78 +107,109 @@ struct SettingsView: View {
     }
 
     var body: some View {
-        VStack(spacing: 16) {
-            // Launch at login
-            HStack {
-                Text("Launch at login")
-                Spacer()
-                Toggle("", isOn: $launchAtLogin)
-                    .onChange(of: launchAtLogin) { _, _ in
-                        toggleLaunchAtLogin()
+        VStack(spacing: 20) {
+            // App Behavior Group
+            VStack(alignment: .leading, spacing: 8) {
+                HStack {
+                    Text("App Behavior")
+                        .font(.headline)
+                        .foregroundColor(.primary)
+                    Spacer()
+                }
+                
+                VStack(spacing: 0) {
+                    HStack {
+                        Text("Launch at login")
+                        Spacer()
+                        Toggle("", isOn: $launchAtLogin)
+                            .onChange(of: launchAtLogin) { _, _ in
+                                toggleLaunchAtLogin()
+                            }
                     }
-            }
-            .padding(.vertical, 4)
-
-            Divider()
-
-            // 24-hour time
-            HStack {
-                Text("24-hour time")
-                Spacer()
-                Toggle("", isOn: $use24HourTime)
-                    .onChange(of: use24HourTime) { _, newValue in
-                        timeViewModel.use24HourTime = newValue
-                    }
-            }
-            .padding(.vertical, 4)
-
-            Divider()
-
-            // Time zone selection
-            HStack {
-                Text("Time zone")
-                Spacer()
-                Menu {
-                    ForEach(popularTimezones, id: \.identifier) { timezone in
-                        Button {
-                            timeViewModel.updateTimezone(timezone.identifier)
-                        } label: {
-                            let timeZone = TimeZone(identifier: timezone.identifier)!
-                            let offset = timeZone.secondsFromGMT() / 3600
-                            let offsetString = offset >= 0 ? "+\(offset)" : "\(offset)"
-                            Text("\(timezone.cityName) (UTC\(offsetString))")
-                        }
-                    }
-                } label: {
-                    Text(selectedTimezoneDisplay)
-                        .frame(maxWidth: 200)
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 12)
+                    .background(Color(NSColor.controlBackgroundColor))
+                    .cornerRadius(8)
                 }
             }
-            .padding(.vertical, 4)
-
-            Divider()
-
-            // Prefix text
-            HStack(alignment: .top) {
-                Text("Prefix text")
-                Spacer()
-                VStack(alignment: .trailing, spacing: 4) {
-                    TextField("Optional (e.g. 🇺🇸)", text: $prefixText)
-                        .textFieldStyle(RoundedBorderTextFieldStyle())
-                        .frame(width: 200)
-                        .onChange(of: prefixText) { _, newValue in
-                            timeViewModel.prefixText = newValue
-                        }
+            
+            // Time Display Group
+            VStack(alignment: .leading, spacing: 8) {
+                HStack {
+                    Text("Time Display")
+                        .font(.headline)
+                        .foregroundColor(.primary)
+                    Spacer()
+                }
+                
+                VStack(spacing: 0) {
+                    // 24-hour time
+                    HStack {
+                        Text("24-hour time")
+                        Spacer()
+                        Toggle("", isOn: $use24HourTime)
+                            .onChange(of: use24HourTime) { _, newValue in
+                                timeViewModel.use24HourTime = newValue
+                            }
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 12)
                     
-                    Text("Tip: Use a flag emoji")
-                        .font(.footnote)
-                        .foregroundColor(.secondary)
+                    Divider()
+                        .padding(.horizontal, 16)
+
+                    // Time zone selection
+                    HStack {
+                        Text("Time zone")
+                        Spacer()
+                        Menu {
+                            ForEach(popularTimezones, id: \.identifier) { timezone in
+                                Button {
+                                    timeViewModel.updateTimezone(timezone.identifier)
+                                } label: {
+                                    let timeZone = TimeZone(identifier: timezone.identifier)!
+                                    let offset = timeZone.secondsFromGMT() / 3600
+                                    let offsetString = offset >= 0 ? "+\(offset)" : "\(offset)"
+                                    Text("\(timezone.cityName) (UTC\(offsetString))")
+                                }
+                            }
+                        } label: {
+                            Text(selectedTimezoneDisplay)
+                                .frame(maxWidth: 200)
+                        }
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 12)
+                    
+                    Divider()
+                        .padding(.horizontal, 16)
+
+                    // Prefix text
+                    HStack(alignment: .top) {
+                        Text("Prefix text")
+                        Spacer()
+                        VStack(alignment: .trailing, spacing: 4) {
+                            TextField("Optional (e.g. 🇺🇸)", text: $prefixText)
+                                .textFieldStyle(RoundedBorderTextFieldStyle())
+                                .frame(width: 200)
+                                .onChange(of: prefixText) { _, newValue in
+                                    timeViewModel.prefixText = newValue
+                                }
+                            
+                            Text("Tip: Use a flag emoji")
+                                .font(.footnote)
+                                .foregroundColor(.secondary)
+                        }
+                    }
+                    .padding(.horizontal, 16)
+                    .padding(.vertical, 12)
                 }
+                .background(Color(NSColor.controlBackgroundColor))
+                .cornerRadius(8)
             }
-            .padding(.vertical, 4)
         }
-        .padding()
-        .frame(width: 400, height: 300)
+        .padding(20)
+        .frame(width: 400, height: 320)
         .onAppear {
             // Initialize settings from TimeViewModel
             use24HourTime = timeViewModel.use24HourTime
