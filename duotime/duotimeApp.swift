@@ -9,12 +9,14 @@ struct MenuBarContent: View {
         Button("Change Timezone") {
             openWindow(id: "settings")
         }
+        .keyboardShortcut(",", modifiers: .command)
 
         Divider()
 
         Button("Quit duotime") {
             NSApplication.shared.terminate(nil)
         }
+        .keyboardShortcut("q", modifiers: .command)
     }
 }
 
