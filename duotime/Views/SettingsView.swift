@@ -47,6 +47,7 @@ struct SettingsView: View {
         TimezoneInfo(identifier: "Asia/Singapore", cityName: "Singapore", countryRegion: "Singapore"),
         TimezoneInfo(identifier: "Asia/Seoul", cityName: "Seoul", countryRegion: "South Korea"),
         TimezoneInfo(identifier: "Asia/Kolkata", cityName: "Mumbai", countryRegion: "India"),
+        TimezoneInfo(identifier: "Asia/Kolkata", cityName: "Delhi", countryRegion: "India"),
         TimezoneInfo(identifier: "Asia/Dubai", cityName: "Dubai", countryRegion: "UAE"),
         TimezoneInfo(identifier: "Asia/Bangkok", cityName: "Bangkok", countryRegion: "Thailand"),
         TimezoneInfo(identifier: "Asia/Manila", cityName: "Manila", countryRegion: "Philippines"),
@@ -114,8 +115,21 @@ struct SettingsView: View {
             Text("Choose your favorite timezone:")
                 .foregroundStyle(.secondary)
 
-            TextField("Search timezones...", text: $searchText)
-                .textFieldStyle(.roundedBorder)
+            ZStack(alignment: .trailing) {
+                TextField("Search timezones...", text: $searchText)
+                    .textFieldStyle(.roundedBorder)
+
+                if !searchText.isEmpty {
+                    Button(action: {
+                        searchText = ""
+                    }) {
+                        Image(systemName: "xmark.circle.fill")
+                            .foregroundColor(.gray)
+                            .padding(.trailing, 8)
+                    }
+                    .buttonStyle(.plain)
+                }
+            }
 
             if searchText.isEmpty {
                 Text("Popular Cities:")
