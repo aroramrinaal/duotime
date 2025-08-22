@@ -83,114 +83,85 @@ struct SettingsView: View {
     }
 
     var body: some View {
-        VStack(spacing: 0) {
-            // Header with branding
+        VStack(spacing: 20) {
+            // Launch at login
             HStack {
+                Text("Launch at login")
+                    .font(.system(size: 13))
+                Spacer()
+                Toggle("", isOn: $launchAtLogin)
+                    .toggleStyle(.switch)
+            }
+
+            Divider()
+
+            // 24-hour time
+            HStack {
+                Text("24-hour time")
+                    .font(.system(size: 13))
+                Spacer()
+                Toggle("", isOn: $use24HourTime)
+                    .toggleStyle(.switch)
+            }
+
+            Divider()
+
+            // Time zone selection
+            HStack {
+                Text("Time zone")
+                    .font(.system(size: 13))
+                Spacer()
+                Menu {
+                    ForEach(popularTimezones, id: \.identifier) { timezone in
+                        Button {
+                            timeViewModel.updateTimezone(timezone.identifier)
+                        } label: {
+                            let timeZone = TimeZone(identifier: timezone.identifier)!
+                            let offset = timeZone.secondsFromGMT() / 3600
+                            let offsetString = offset >= 0 ? "+\(offset)" : "\(offset)"
+                            Text("\(timezone.cityName) (UTC\(offsetString))")
+                        }
+                    }
+                } label: {
+                    HStack {
+                        Text(selectedTimezoneDisplay)
+                            .font(.system(size: 13))
+                            .foregroundColor(.primary)
+                        Image(systemName: "chevron.up.chevron.down")
+                            .font(.system(size: 10))
+                            .foregroundColor(.secondary)
+                    }
+                    .padding(.horizontal, 8)
+                    .padding(.vertical, 4)
+                    .background(Color(NSColor.controlBackgroundColor))
+                    .cornerRadius(4)
+                }
+                .menuStyle(.borderlessButton)
+            }
+
+            Divider()
+
+            // Prefix text
+            VStack(alignment: .leading, spacing: 8) {
+                HStack {
+                    Text("Prefix text")
+                        .font(.system(size: 13))
+                    Spacer()
+                }
+                
                 VStack(alignment: .leading, spacing: 4) {
-                    Text("duotime")
-                        .font(.title)
-                        .fontWeight(.semibold)
-                        .foregroundColor(.primary)
-                    Text("Second Clock Settings")
-                        .font(.subheadline)
+                    TextField("", text: $prefixText)
+                        .textFieldStyle(.roundedBorder)
+                        .font(.system(size: 13))
+                    
+                    Text("Tip: You could use a flag emoji")
+                        .font(.system(size: 11))
                         .foregroundColor(.secondary)
                 }
-                Spacer()
             }
-            .padding(.horizontal, 24)
-            .padding(.top, 24)
-            .padding(.bottom, 32)
-
-            VStack(spacing: 24) {
-                // Launch at login
-                HStack {
-                    Text("Launch at login")
-                        .font(.system(size: 14))
-                    Spacer()
-                    Toggle("", isOn: $launchAtLogin)
-                        .toggleStyle(.switch)
-                }
-                .padding(.horizontal, 24)
-
-                Divider()
-                    .padding(.horizontal, 24)
-
-                // 24-hour time
-                HStack {
-                    Text("24-hour time")
-                        .font(.system(size: 14))
-                    Spacer()
-                    Toggle("", isOn: $use24HourTime)
-                        .toggleStyle(.switch)
-                }
-                .padding(.horizontal, 24)
-
-                Divider()
-                    .padding(.horizontal, 24)
-
-                // Time zone selection
-                HStack {
-                    Text("Time zone")
-                        .font(.system(size: 14))
-                    Spacer()
-                    Menu {
-                        ForEach(popularTimezones, id: \.identifier) { timezone in
-                            Button {
-                                timeViewModel.updateTimezone(timezone.identifier)
-                            } label: {
-                                let timeZone = TimeZone(identifier: timezone.identifier)!
-                                let offset = timeZone.secondsFromGMT() / 3600
-                                let offsetString = offset >= 0 ? "+\(offset)" : "\(offset)"
-                                Text("\(timezone.cityName) (UTC\(offsetString))")
-                            }
-                        }
-                    } label: {
-                        HStack {
-                            Text(selectedTimezoneDisplay)
-                                .font(.system(size: 14))
-                                .foregroundColor(.primary)
-                            Image(systemName: "chevron.up.chevron.down")
-                                .font(.system(size: 10))
-                                .foregroundColor(.secondary)
-                        }
-                        .padding(.horizontal, 10)
-                        .padding(.vertical, 6)
-                        .background(Color(NSColor.controlBackgroundColor))
-                        .cornerRadius(6)
-                    }
-                    .menuStyle(.borderlessButton)
-                }
-                .padding(.horizontal, 24)
-
-                Divider()
-                    .padding(.horizontal, 24)
-
-                // Prefix text
-                VStack(alignment: .leading, spacing: 12) {
-                    HStack {
-                        Text("Prefix text")
-                            .font(.system(size: 14))
-                        Spacer()
-                    }
-                    .padding(.horizontal, 24)
-                    
-                    VStack(alignment: .leading, spacing: 6) {
-                        TextField("", text: $prefixText)
-                            .textFieldStyle(.roundedBorder)
-                            .font(.system(size: 14))
-                            .padding(.horizontal, 24)
-                        
-                        Text("Tip: You could use a flag emoji")
-                            .font(.system(size: 12))
-                            .foregroundColor(.secondary)
-                            .padding(.horizontal, 24)
-                    }
-                }
-            }
-
-            Spacer()
         }
-        .frame(width: 480, height: 380)
+        .padding(20)
+        .frame(width: 400, height: 280)
         .background(Color(NSColor.windowBackgroundColor))
     }
 }
