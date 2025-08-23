@@ -24,7 +24,7 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		DE6A334A2E57341F008BF176 /* duotime.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = duotime.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		DE6A334A2E57341F008BF176 /* Duotime.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Duotime.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		DE6A33582E573420008BF176 /* duotimeTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = duotimeTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		DE6A33622E573420008BF176 /* duotimeUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = duotimeUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -85,7 +85,7 @@
 		DE6A334B2E57341F008BF176 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				DE6A334A2E57341F008BF176 /* duotime.app */,
+				DE6A334A2E57341F008BF176 /* Duotime.app */,
 				DE6A33582E573420008BF176 /* duotimeTests.xctest */,
 				DE6A33622E573420008BF176 /* duotimeUITests.xctest */,
 			);
@@ -95,9 +95,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		DE6A33492E57341F008BF176 /* duotime */ = {
+		DE6A33492E57341F008BF176 /* Duotime */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = DE6A336C2E573420008BF176 /* Build configuration list for PBXNativeTarget "duotime" */;
+			buildConfigurationList = DE6A336C2E573420008BF176 /* Build configuration list for PBXNativeTarget "Duotime" */;
 			buildPhases = (
 				DE6A33462E57341F008BF176 /* Sources */,
 				DE6A33472E57341F008BF176 /* Frameworks */,
@@ -110,11 +110,11 @@
 			fileSystemSynchronizedGroups = (
 				DE6A334C2E57341F008BF176 /* duotime */,
 			);
-			name = duotime;
+			name = Duotime;
 			packageProductDependencies = (
 			);
 			productName = duotime;
-			productReference = DE6A334A2E57341F008BF176 /* duotime.app */;
+			productReference = DE6A334A2E57341F008BF176 /* Duotime.app */;
 			productType = "com.apple.product-type.application";
 		};
 		DE6A33572E573420008BF176 /* duotimeTests */ = {
@@ -200,7 +200,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				DE6A33492E57341F008BF176 /* duotime */,
+				DE6A33492E57341F008BF176 /* Duotime */,
 				DE6A33572E573420008BF176 /* duotimeTests */,
 				DE6A33612E573420008BF176 /* duotimeUITests */,
 			);
@@ -258,12 +258,12 @@
 /* Begin PBXTargetDependency section */
 		DE6A335A2E573420008BF176 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = DE6A33492E57341F008BF176 /* duotime */;
+			target = DE6A33492E57341F008BF176 /* Duotime */;
 			targetProxy = DE6A33592E573420008BF176 /* PBXContainerItemProxy */;
 		};
 		DE6A33642E573420008BF176 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = DE6A33492E57341F008BF176 /* duotime */;
+			target = DE6A33492E57341F008BF176 /* Duotime */;
 			targetProxy = DE6A33632E573420008BF176 /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -529,7 +529,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		DE6A336C2E573420008BF176 /* Build configuration list for PBXNativeTarget "duotime" */ = {
+		DE6A336C2E573420008BF176 /* Build configuration list for PBXNativeTarget "Duotime" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				DE6A336D2E573420008BF176 /* Debug */,
