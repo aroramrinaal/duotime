@@ -13,7 +13,7 @@ struct MenuBarContent: View {
 
         Divider()
 
-        Button("Quit duotime") {
+        Button("Quit Duotime") {
             NSApplication.shared.terminate(nil)
         }
         .keyboardShortcut("q", modifiers: .command)
