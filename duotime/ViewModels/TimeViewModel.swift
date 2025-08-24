@@ -21,6 +21,7 @@ class TimeViewModel: ObservableObject {
         }
     }
     private var timezoneService: TimezoneServiceProtocol
+    private var appBehaviorService: AppBehaviorService
     private var timer: Timer?
 
     var currentTimezone: String {
@@ -29,6 +30,7 @@ class TimeViewModel: ObservableObject {
 
     init(timezoneService: TimezoneServiceProtocol = TimezoneService()) {
         self.timezoneService = timezoneService
+        self.appBehaviorService = AppBehaviorService.shared
         updateTimeFormat()
         startTimer()
     }
@@ -37,10 +39,12 @@ class TimeViewModel: ObservableObject {
         let formatter = DateFormatter()
         formatter.timeZone = TimeZone(identifier: currentTimezone)
 
+        let showSeconds = appBehaviorService.showSeconds
+
         if use24HourTime {
-            formatter.dateFormat = "HH:mm:ss"
+            formatter.dateFormat = showSeconds ? "HH:mm:ss" : "HH:mm"
         } else {
-            formatter.dateFormat = "h:mm:ss a"
+            formatter.dateFormat = showSeconds ? "h:mm:ss a" : "h:mm a"
         }
 
         let timeString = formatter.string(from: Date())

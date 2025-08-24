@@ -9,6 +9,7 @@ import SwiftUI
 
 struct AppBehaviorSectionView: View {
     @Binding var launchAtLogin: Bool
+    @StateObject private var appBehaviorService = AppBehaviorService.shared
 
     var body: some View {
         VStack(alignment: .leading, spacing: 8) {
@@ -26,6 +27,16 @@ struct AppBehaviorSectionView: View {
                         .onChange(of: launchAtLogin) { _, newValue in
                             LaunchAtLoginService.shared.toggleLaunchAtLogin(enabled: newValue)
                         }
+                }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 12)
+
+                Divider()
+
+                HStack {
+                    Text("Show seconds")
+                    Spacer()
+                    Toggle("", isOn: $appBehaviorService.showSeconds)
                 }
                 .padding(.horizontal, 16)
                 .padding(.vertical, 12)

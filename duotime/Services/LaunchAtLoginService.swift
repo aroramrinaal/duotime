@@ -7,6 +7,8 @@
 
 import Foundation
 import ServiceManagement
+import SwiftUI
+import Combine
 
 class LaunchAtLoginService {
     static let shared = LaunchAtLoginService()
@@ -33,4 +35,17 @@ class LaunchAtLoginService {
             }
         }
     }
+}
+
+// Service to manage app behavior settings
+class AppBehaviorService: ObservableObject {
+    static let shared = AppBehaviorService()
+
+    @AppStorage("showSeconds") var showSeconds: Bool = true {
+        didSet {
+            objectWillChange.send()
+        }
+    }
+
+    private init() {}
 }
