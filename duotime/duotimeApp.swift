@@ -34,7 +34,7 @@ struct duotimeApp: App {
         }
 
         // settings window
-        Window("Settings", id: "settings") {
+        Window("Duotime Settings", id: "settings") {
             SettingsView(timeViewModel: timeViewModel)
                 .onAppear {
                     becomeRegularWithMinimalMenu()
