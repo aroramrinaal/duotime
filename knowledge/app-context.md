@@ -113,3 +113,6 @@ when reasoning about duotime:
 ---
 
 this document should serve as knowledge context for any ai agent tasked with assisting development, debugging, or extending duotime.
+
+
+## App Icon(s) color theme
