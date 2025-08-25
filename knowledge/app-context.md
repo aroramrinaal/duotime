@@ -116,3 +116,8 @@ this document should serve as knowledge context for any ai agent tasked with ass
 
 
 ## App Icon(s) color theme
+`#2c52d4`
+`#8fb6fa`
+`#a5cffc`
+`#345cdb`
+`#78adfc`
